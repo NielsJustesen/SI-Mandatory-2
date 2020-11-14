@@ -89,15 +89,40 @@ class Deposit():
             account.UpdateAccount(bankUserId, amount)
         except sqlite3.Error:
             print("---- FAILED TO ADD NEW DEPOSIT ----")
+
+    def GetDeposits(self, bankUserId):
+        try:
+            cur = db.cursor()
+            cur.execute("SELECT amount FROM Deposit WHERE BankUserId = " + str(bankUserId))
+            deposits = cur.fetchall()
+            return deposits
+        except:
+            print("---- FAILED TO GET DEPOSITS ----")
+
+class Loan():
+
+    def CreateLoan(self, bankUserId, amount):
+        try:
+            account = Account()
+            createdAt = datetime.now()
+            db.execute("INSERT INTO Loan VALUES (?,?,?,?,?)", (None, str(bankUserId), str(createdAt), None, str(amount)))
+            db.commit()
+            account.UpdateAccount(bankUserId, amount)
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
                    
 
 
 bankUser = BankUser()
 account = Account()
 deposit = Deposit()
+loan = Loan()
 
 # bankUser.AddBankUser(1)
 # account.AddAccount(1,1,True,10000)
-deposit.AddDeposit(1,1000)
+# deposit.AddDeposit(1,1000)
 # userAccount = account.GetAccount(1)
 # print(account.GetAccount(1))
+# deposit.GetDeposits(1)
+# loan.CreateLoan(1, 200)

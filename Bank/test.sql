@@ -1,0 +1,1 @@
+SELECT * FROM Account WHERE BankUserId = 1;
