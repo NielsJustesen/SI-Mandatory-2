@@ -56,14 +56,9 @@ class Account():
     def GetAccount(self, bankUserId):
         try:
             cur = db.cursor()
-            cur.execute("SELECT * FROM Account WHERE BankUserId = ?;", (str(bankUserId)))
-            db.commit()
-            print("************")
-            account = db.cursor().fetchone()
-            print(account)
-            print("************")
-
-            return db.cursor().fetchone()
+            cur.execute("""SELECT * FROM Account WHERE BankUserId = """ + str(bankUserId))
+            account = cur.fetchone()
+            return account
         except sqlite3.Error:
             print("---- FAILED TO SELECT ACCOUNT ----")
 
@@ -88,16 +83,12 @@ class Deposit():
     def AddDeposit(self, bankUserId, amount):
         account = Account()
         try:
-            c = db.cursor()
-            c.execute("begin")
+            cur = db.cursor()
             createdAt = datetime.now()
-            c.execute("INSERT INTO Deposit VALUES (?,?,?,?)", (None, str(bankUserId), str(createdAt), str(amount)))
+            cur.execute("INSERT INTO Deposit VALUES (?,?,?,?)", (None, str(bankUserId), str(createdAt), str(amount)))
             account.UpdateAccount(bankUserId, amount)
-            c.execute("UPDATE Account SET Amount = ? WHERE BankUserId = ?", (str(newAmount), str(bankUserId)))
-            c.execute("commit")
         except sqlite3.Error:
             print("---- FAILED TO ADD NEW DEPOSIT ----")
-            c.execute("rollback")
                    
 
 
@@ -107,5 +98,6 @@ deposit = Deposit()
 
 # bankUser.AddBankUser(1)
 # account.AddAccount(1,1,True,10000)
-deposit.AddDeposit(1,100)
+deposit.AddDeposit(1,1000)
 # userAccount = account.GetAccount(1)
+# print(account.GetAccount(1))
