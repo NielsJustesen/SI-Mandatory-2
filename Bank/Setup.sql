@@ -1,0 +1,42 @@
+-- SQLite
+DROP TABLE IF EXISTS BankUser;
+DROP TABLE IF EXISTS Loan;
+DROP TABLE IF EXISTS Deposit;
+DROP TABLE IF EXISTS Account;
+
+
+CREATE TABLE BankUser(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserId INTEGER NOT NULL,
+    CreatedAt date NOT NULL,
+    ModifiedAt date
+);
+
+CREATE TABLE Loan(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    BankUserId INTEGER NOT NULL,
+    CreatedAt date NOT NULL,
+    ModifiedAt date,
+    Amount REAL NOT NULL,
+    FOREIGN KEY (BankUserId) REFERENCES BankUser(Id) ON DELETE CASCADE
+);
+
+CREATE TABLE Deposit(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    BankUserId INTEGER NOT NULL,
+    CreatedAt date NOT NULL,
+    Amount REAL NOT NULL,
+    FOREIGN KEY (BankUserId) REFERENCES BankUser(Id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE Account(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    BankUserId INTEGER NOT NULL,
+    AccountNo INTEGER NOT NULL,
+    IsStudent bool,
+    CreatedAt date NOT NULL,
+    ModifiedAt date,
+    Amount REAL NOT NULL,
+    FOREIGN KEY (BankUserId) REFERENCES BankUser(Id) ON DELETE CASCADE
+);
