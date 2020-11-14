@@ -11,7 +11,7 @@ db = sqlite3.connect("Bank.db")
 #BankUser TABLE CRUD Operations
 def AddBankUser(userId):
     createdAt = datetime.now()
-    query = "INSERT INTO BankUser (?,?,?,?) VALUES (" + None + f"{userId}, {createdAt}" + None + ");"
+    query = "INSERT INTO BankUser (?,?,?,?) VALUES (" + None + f"{userId}, {createdAt}," + None + ");"
     db.execute(query)
     db.commit()
 
@@ -36,7 +36,7 @@ def DeleteBankUser(userId):
 #Account TABLE CRUD OPERATIONS
 def AddAccount(bankUserId, accountNo, isStudent, amount):
     createdAt = datetime.now()
-    query = "INSERT INTO Account (?,?,?,?,?,?,?) VALUES (" + None + f"{bankUserId}, {accountNo}, {isStudent}, {createdAt}" + None + f"{amount});"
+    query = "INSERT INTO Account (?,?,?,?,?,?,?) VALUES (" + None + f"{bankUserId}, {accountNo}, {isStudent}, {createdAt}," + None + f", {amount});"
     db.execute(query)
     db.commit()
 
