@@ -7,12 +7,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     currentAmount = req.params.get('CurrentAmount')
-    newAmount = req.params.get('NewAmount')
+    loanAmount = req.params.get('LoanAmount')
 
 
-    if (ValidateLoan):
+    if (ValidateLoan(currentAmount, loanAmount)):
         return func.HttpResponse(
-            f"The new loan has been validated, {newAmount} will be deposited to the account",
+            f"The new loan has been validated, {loanAmount} will be deposited to the account",
             status_code=200
         )
     else:
@@ -22,11 +22,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         )
 
 
-def ValidateLoan(currentAmount, newAmount):
+def ValidateLoan(currentAmount, loanAmount):
     
     percentageCheck = 0.75
-    valid = currentAmount * percentageCheck
-    if (valid >= currentAmount):
+    validLoanAmount = currentAmount * percentageCheck
+    if (validLoanAmount <= loanAmount):
         return True
     else:
         return False
