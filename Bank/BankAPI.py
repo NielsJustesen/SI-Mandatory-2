@@ -34,9 +34,9 @@ def ListDeposits():
         for x in deposits:
             returnObj.append(x[0])
     else:
-        return Response({"error": "WTF"}, 400)
+        return Response(json.dumps({"error": "Bad Request"}), status=400)
     if deposits:
-        return Response(json.dumps({"deposits":returnObj}), 200, mimetype='application/json')
+        return Response(json.dumps({"deposits":returnObj}), status=200, mimetype='application/json')
 
 # @app.route('/create-loan', methods = ['POST'])
 # def CreateLoan():
