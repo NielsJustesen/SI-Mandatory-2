@@ -1,7 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, Response
+import sqlite3
 import json
 # from Functions import InterestRate, CreateLoan
-from Bank.BankDB import BankUser, Account, Deposit, Loan
+# from Bank.BankDB import BankUser, Account, Deposit, Loan
 app = Flask(__name__)
 
 
@@ -19,12 +20,23 @@ app = Flask(__name__)
 
 @app.route('/list-deposits', methods = ['GET'])
 def ListDeposits():
-    data = request.get_json()
-    bankUserId = data["BankUserId"]
-    deposit = Deposit()
-    deposists = deposit.GetDeposits(bankUserId)
-    if deposists:
-        return { "deposits": deposists }, 200
+    if 'BankUserId' in request.args:
+        bankUserId = request.args["BankUserId"]
+    else:
+        return Response({"Bad Request": "Bad Request"}, status=400)
+    db = sqlite3.connect("Bank.db")
+    cur = db.cursor()
+    cur.execute("""SELECT amount FROM Deposit WHERE BankUserId = """ + str(bankUserId))
+    deposits = cur.fetchall()
+    db.close()
+    returnObj = []
+    if deposits:
+        for x in deposits:
+            returnObj.append(x[0])
+    else:
+        return Response({"error": "WTF"}, 400)
+    if deposits:
+        return Response(json.dumps({"deposits":returnObj}), 200, mimetype='application/json')
 
 # @app.route('/create-loan', methods = ['POST'])
 # def CreateLoan():

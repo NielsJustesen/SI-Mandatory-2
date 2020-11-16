@@ -1,6 +1,5 @@
 import sqlite3
 from datetime import datetime, timedelta
-from flask import Flask, request, Response
 import json
 
 
@@ -132,11 +131,10 @@ loan = Loan()
 
 # bankUser.AddBankUser(1)
 # account.AddAccount(1,1,True,10000)
-# deposit.AddDeposit(1,1000)
+# deposit.AddDeposit(1,4444)
 # userAccount = account.GetAccount(1)
 # print(account.GetAccount(1))
 deposits = deposit.GetDeposits(1)
-print(type(deposits[0]))
 for x in deposits:
     print(x[0])
 # loan.CreateLoan(1, 200)
@@ -148,60 +146,3 @@ for x in deposits:
 # user = bankUser.DeleteBankUser(1)
 # print(user)
 # print(useraccunt)
-
-###############
-##### API #####
-###############
-
-# from Functions import InterestRate, CreateLoan
-
-
-app = Flask(__name__)
-
-
-# @app.route('/add-deposit', methods = ['POST'])
-# def AddNewDeposit():
-#     data = request.get_json()
-#     amount = data["amount"]
-#     bankUserId = data["BankUserId"]
-#     if (amount <= 0 | amount == None):
-#         return
-#     else:
-#         amountWithInterest = request.get_json(InterestRate.main(json.dumps({"amount":amount})))["amount"]
-#         Account.UpdateAccount(bankUserId, amountWithInterest)
-#         Deposit.AddDeposit(bankUserId, amount)
-
-@app.route('/list-deposits', methods = ['GET'])
-def ListDeposits():
-    # if 'BankUserId' in request.args:
-    #     bankUserId = request.args["BankUserId"]
-    bankUserId = 1
-    data = request.get_json()
-    # bankUserId = data["BankUserId"]
-    cur = db.cursor()
-    cur.execute("SELECT amount FROM Deposit WHERE BankUserId = " + str(bankUserId))
-    deposits = cur.fetchall()
-    returnObj = []
-    if deposits:
-        for x in deposits:
-            returnObj.append(deposits[0])
-    else:
-        return Response({"error": "WTF"}, 400)
-    if deposits:
-        return Response({ "deposits": json.dumps(returnObj) }, 200, mimetype='application/json')
-
-# @app.route('/create-loan', methods = ['POST'])
-# def CreateLoan():
-#     loan = Loan()
-#     data = request.get_json()
-#     bankUserId = data["BankUserId"]
-#     newAmount = data["NewAmount"]
-#     currentAmount = data["CurrentAmount"]
-#     validation = CreateLoan.main(json.dumps({"CurrentAmount": currentAmount, "NewAmount": newAmount}))
-#     if (bankUserId == ""):
-#         return 400
-#     elif (validation["status code"] == 200):
-#         loan.CreateLoan(bankUserId, newAmount)
-#         return 201
-#     else:
-#         return { "Error Message": "insufficiant funds"}, 403
