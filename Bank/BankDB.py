@@ -204,12 +204,15 @@ account = Account()
 deposit = Deposit()
 loan = Loan()
 
-# bankUser.AddBankUser(5)
-# account.AddAccount(4,1,True,10000)
+
+
+# for x in range(5):
+#     bankUser.AddBankUser(x+5)
+#     account.AddAccount(x+5,1,True,10000)
 # deposit.AddDeposit(1,14)
 # d = deposit.GetDeposits(4)
-# userAccount = account.GetAccount(4)
-# print(account.GetAccount(4))
+# userAccount = account.GetAccount(6)
+# print(account.GetAccount(6))
 # deposits = deposit.GetDeposits(4)
 # for x in deposits:
 #     print(x[0])

@@ -87,12 +87,6 @@ def PayLoan():
         return Response(json.dumps({"Message":"Bad Request"}), status=400)
 
     
-    print("1")
-
-# o Implement /list-loans endpoint
-# § GET request which will return a list of all the loans belonging to a user that
-# are greater than 0 (not paid)
-# § The request should have a BankUserId to retrieve the loans for a user.
 @app.route('/list-loans', methods=['GET'])
 def ListLoans():
 
@@ -115,11 +109,39 @@ def ListLoans():
         return Response(json.dumps({"Message":"Bad Request"}), status=400)
 
 
-# o Implement /withdrawl-money endpoint:
-# § The body of that request should contain an amount and a UserId(Not
-# BankUserId, not SkatUserId)
-# § Subtract (if possible) the amount from that users account. Throw an error
-# otherwise.
-@app.route('/withdraw-money', methods=['POST'])
+
+@app.route('/withdraw-money', methods=['GET'])
 def WithdrawMoney():
-    print("1")
+
+    amount = ""
+    userId = ""
+    
+    if 'Amount' in request.args and 'UserId' in request.args:
+        amount = request.args['Amount']
+        userId = request.args['UserId']
+        account = Account()
+        try:
+            db = sqlite3.connect("Bank.db")
+            cur = db.cursor()
+            cur.execute("SELECT Amount FROM Account LEFT JOIN BankUser ON Account.BankUserId = BankUser.UserId WHERE BankUser.UserId = ?", (str(userId)))
+            currentAmount = cur.fetchone()[0]
+            print(f"Current Amount: {currentAmount}. Amount to withdraw: {amount}")
+            if currentAmount != None:
+                if (int(currentAmount) >= int(amount)):
+                    currentAmount = int(currentAmount) - int(amount)
+                    db.execute("UPDATE Account SET Amount = ? WHERE BankUserId = ?", (str(currentAmount), str(userId)))
+                    db.commit()
+                    db.close()
+                    return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount withdrewn": float(amount)}))
+                else:
+                    return Response(json.dumps({"Message":"Not enough money in account"}), status=400)
+            else:
+                return Response(json.dumps({"Message":"No account found"}), status=400)
+        except sqlite3.Error as er:
+            return Response(json.dumps({"Message":"No user found"}), status=400)
+            print("---- ERROR COULD NOT WITHDRAW MONEY ----")
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+    else:
+        return Response(json.dumps({"Message":"Bag Request"}), status=400)
+   
