@@ -2,27 +2,30 @@ from flask import Flask, request, Response
 import sqlite3
 import json
 import sys
-# from Functions import InterestRate, CreateLoan
+import requests
 from datetime import datetime
 from BankDB import Account, BankUser, Loan, Deposit
 app = Flask(__name__)
 
 
 @app.route('/add-deposit', methods = ['POST'])
-def AddNewDeposit():
+def AddDeposit():
     bankUserId = ""
     amount = ""
     if 'BankUserId' in request.args and 'Amount' in request.args:
         bankUserId = request.args["BankUserId"]
         amount = request.args["Amount"]
-    if (float(amount) <= 0 or amount == None and bankUserId == None):
+    if (float(amount) <= 0 or amount == None or bankUserId == None):
         return Response(json.dumps({"Message":"Bad Request"}), status=400)
     else:
         d = Deposit()
-         #######################################
-         # MISSING Interestrate cloud function!#
-         #######################################
-        d.AddDeposit(bankUserId, amount)
+        parameters = {
+            "Deposit": str(amount)
+        }
+
+        resp = requests.get("http://localhost:7071/api/InterestRate", params=parameters)
+        newAmount = resp.json()['Deposit']
+        d.AddDeposit(bankUserId, newAmount)
         return Response(json.dumps({"Message":"Deposit was succesful", "Deposited": float(amount)}),status=201)
 
 @app.route('/list-deposits', methods = ['GET'])
@@ -48,19 +51,28 @@ def CreateLoan():
 
     bankUserId = ""
     loanAmount = ""
+    validation = False
 
     if 'BankUserId' in request.args and 'LoanAmount' in request.args:
         bankUserId = request.args["BankUserId"]
         loanAmount = request.args["LoanAmount"]
-        ###################################
-        # MISSING Validate cloud function!#
-        ###################################
+        account = Account()
+        currentAmount = account.GetAccount(bankUserId)[6]
+      
+        parameters = {
+            "currentAmount": str(currentAmount),
+            "loanAmount": str(loanAmount)
+        }
+
+        resp = requests.get("http://localhost:7071/api/ValidateLoan", params=parameters)
+        validation = resp.json()['Valid']
+
     else:
         return Response(json.dumps({"Message": "Bad Request"}), status=400)
 
-    if (bankUserId == ""):
+    if (validation == "False"):
         return Response(json.dumps({"Message":"Unacceptable: Loan is to big"}), status=406)
-    elif (1 == 1 and float(loanAmount) > 0):
+    elif (validation == "True"):
         l = Loan()
         l.CreateLoan(bankUserId, loanAmount)
         return Response(json.dumps({"Message":"Loan was created"}), status=201)
@@ -144,4 +156,4 @@ def WithdrawMoney():
             print("Exception class is: ", er.__class__)
     else:
         return Response(json.dumps({"Message":"Bag Request"}), status=400)
-   
+    

@@ -39,16 +39,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "type": "func",
-            "command": "host start",
-            "problemMatcher": "$func-python-watch",
-            "isBackground": true,
-            "dependsOn": "pipInstall",
-            "options": {
-                "cwd": "${workspaceFolder}/Functions"
-            }
-        },
-        {
             "label": "pipInstall",
             "type": "shell",
             "osx": {
@@ -64,6 +54,24 @@
             "options": {
                 "cwd": "${workspaceFolder}/Functions"
             }
+        },
+        {
+            "type": "func",
+            "command": "host start",
+            "problemMatcher": "$func-node-watch",
+            "isBackground": true,
+            "dependsOn": "npm install"
+        },
+        {
+            "type": "shell",
+            "label": "npm install",
+            "command": "npm install"
+        },
+        {
+            "type": "shell",
+            "label": "npm prune",
+            "command": "npm prune --production",
+            "problemMatcher": []
         }
     ]
 }

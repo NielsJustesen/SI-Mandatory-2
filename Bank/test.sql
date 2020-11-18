@@ -1,1 +1,2 @@
-SELECT Amount, Account.BankUserId, BankUser.UserId FROM Account LEFT JOIN BankUser ON Account.BankUserId = BankUser.UserId WHERE BankUser.UserId = 6
+-- SELECT Amount, Account.BankUserId, BankUser.UserId FROM Account LEFT JOIN BankUser ON Account.BankUserId = BankUser.UserId WHERE BankUser.UserId = 6
+UPDATE Account SET Amount = 0 WHERE BankUserId = 6;

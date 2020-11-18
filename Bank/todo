@@ -1,38 +1,12 @@
-o Implement /list-deposits endpoint:
-§ GET request that takes a BankUserId
-§ Returns a list of all the deposits that were made by that user
-^---------Needs testing--------
 
-o Implement /create-loan endpoint:
-§ Request will contain the BankUserId and LoanAmount.
-§ A POST request will be made to the Loan Algorithm Function with an amount
-and the total account amount for that user
-§ If the status code is 200, a loan record will be created
-§ If the status code is 403 or similar, an error will be returned
-§ The amount will be added to the Account of that user – if it is successful of
-course.
 
-o Implement /pay-loan endpoint:
-§ The loan can be paid integrally by using the /pay-loan endpoint. The request
-will contain the BankUserId and the LoanId as well. This will make the amount
-from a loan 0 and will subtract that amount from the account of that user. If
-there aren’t enough money on the account, an error will be returned.
-
-o Implement /list-loans endpoint
-§ GET request which will return a list of all the loans belonging to a user that
-are greater than 0 (not paid)
-§ The request should have a BankUserId to retrieve the loans for a user.
-
-o Implement /withdrawl-money endpoint:
-§ The body of that request should contain an amount and a UserId(Not
-BankUserId, not SkatUserId)
-§ Subtract (if possible) the amount from that users account. Throw an error
-otherwise.
 
 2. Loan Algorithm Function:
 o Has a POST endpoint.
 o Will calculate if the loan exceeds 75% of the account amount. If it does, return 403,
 otherwise 200
+
+
 3. Interest Rate Function:
 o Has a POST endpoint
 o Upon a new deposit, this function will be called. It will return the amount + 2% of the
