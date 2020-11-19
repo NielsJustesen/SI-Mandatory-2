@@ -1,8 +1,10 @@
 {
-    "azureFunctions.deploySubpath": ".",
-    "azureFunctions.scmDoBuildDuringDeployment": true,
-    "azureFunctions.pythonVenv": ".venv",
-    "azureFunctions.projectLanguage": "Python",
-    "azureFunctions.projectRuntime": "~3",
-    "debug.internalConsoleOptions": "neverOpen"
+  "azureFunctions.deploySubpath": ".",
+  "azureFunctions.pythonVenv": ".venv",
+  "azureFunctions.projectLanguage": "JavaScript",
+  "azureFunctions.projectRuntime": "~3",
+  "azureFunctions.postDeployTask": "npm install",
+  "azureFunctions.preDeployTask": "npm prune",
+  "azureFunctions.scmDoBuildDuringDeployment": true,
+  "debug.internalConsoleOptions": "neverOpen"
 }
