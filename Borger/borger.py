@@ -1,13 +1,11 @@
-from flask import Flask, request
+from flask import Flask, request, Response, Blueprint
 import sqlite3
+import json
 from address import address
 
-app = Flask(__name__)
+borger = Blueprint('borger', __name__)
 
-# TODO - Create a Main API file that imports all blueprints, run app from there
-app.register_blueprint(address)
-
-@app.route('/borger', methods = ['POST'])
+@borger.route('/borger', methods = ['POST'])
 def create():
   db = conn()
   data = request.get_json()
@@ -21,11 +19,11 @@ def create():
     db_cursor.execute(create_stmt, UserId)
     db.commit()
     db.close()
-    return {"status": "user created"}, 201
+    return Response(json.dumps({"status": "user created"}), status=201)
   except Exception as e:
     return {"status": f"user creation failed: {e}"}, 400
 
-@app.route('/borger', methods = ['GET'])
+@borger.route('/borger', methods = ['GET'])
 # Find user with specified id
 # Returns user not found error if record does not exist
 def read():
@@ -52,8 +50,7 @@ def read():
   except Exception as e:
     return {"status": f"failed getting user: {e}"}, 400
 
-@app.route('/borger', methods = ['PUT'])
-# TODO - Implement this
+@borger.route('/borger', methods = ['PUT'])
 # What should be updated here?
 # Update borger with specified id
 # Only possible to update UserId
@@ -87,7 +84,7 @@ def update():
   except Exception as e:
     return {"status": f"failed updating borger: {e}"}, 400
 
-@app.route('/borger', methods = ['DELETE'])
+@borger.route('/borger', methods = ['DELETE'])
 # Delete user with specified id
 # DB Schema cascade deletes all addresses of User ( PRAGMA foreign_keys=ON allows that )
 def delete():
