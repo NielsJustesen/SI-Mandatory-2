@@ -109,14 +109,13 @@ def ListLoans():
         loan = Loan()
         loans = loan.GetUnpaidLoans(bankUserId)
         returnObj = []
-    
         if loans:
             for x in loans:
                 returnObj.append(x[0])
         else:
             return Response(json.dumps({"Message":"No loans found for the user"}), status=204)
 
-        return Response(json.dumps({"Loans":returnObj}))
+        return Response(json.dumps({"Loans":returnObj}), status=200, mimetype='application/json')
     else:
         return Response(json.dumps({"Message":"Bad Request"}), status=400)
 
@@ -132,28 +131,14 @@ def WithdrawMoney():
         amount = request.args['Amount']
         userId = request.args['UserId']
         account = Account()
-        try:
-            db = sqlite3.connect("Bank.db")
-            cur = db.cursor()
-            cur.execute("SELECT Amount FROM Account LEFT JOIN BankUser ON Account.BankUserId = BankUser.UserId WHERE BankUser.UserId = ?", (str(userId)))
-            currentAmount = cur.fetchone()[0]
-            print(f"Current Amount: {currentAmount}. Amount to withdraw: {amount}")
-            if currentAmount != None:
-                if (int(currentAmount) >= int(amount)):
-                    currentAmount = int(currentAmount) - int(amount)
-                    db.execute("UPDATE Account SET Amount = ? WHERE BankUserId = ?", (str(currentAmount), str(userId)))
-                    db.commit()
-                    db.close()
-                    return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount withdrewn": float(amount)}))
-                else:
-                    return Response(json.dumps({"Message":"Not enough money in account"}), status=400)
-            else:
-                return Response(json.dumps({"Message":"No account found"}), status=400)
-        except sqlite3.Error as er:
+        success = account.Withdraw(userId, amount)
+
+        if success == "Withdrawl done":
+            return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount withdrewn": float(amount)}))
+        elif success == "Not enough in account":
+            return Response(json.dumps({"Message":"Not enough money in account"}), status=400)
+        else:
             return Response(json.dumps({"Message":"No user found"}), status=400)
-            print("---- ERROR COULD NOT WITHDRAW MONEY ----")
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
     else:
         return Response(json.dumps({"Message":"Bag Request"}), status=400)
     
