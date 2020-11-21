@@ -119,6 +119,30 @@ class Account():
             print("Exception class is: ", er.__class__)
             return False
 
+    def Withdraw(self, userId, amount):
+        try:
+            db = sqlite3.connect("Bank.db")
+            cur = db.cursor()
+            cur.execute("SELECT Amount FROM Account LEFT JOIN BankUser ON Account.BankUserId = BankUser.UserId WHERE BankUser.UserId = ?", (str(userId)))
+            currentAmount = cur.fetchone()[0]
+            if currentAmount != None:
+                if (float(currentAmount) >= float(amount)):
+                    currentAmount = float(currentAmount) - float(amount)
+                    modifiedAt = datetime.now()
+                    db.execute("UPDATE Account SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ?", (str(currentAmount), str(modifiedAt), str(userId)))
+                    db.commit()
+                    db.close()
+                    return "Withdrawl done"
+                else:
+                    return "Not enough in account"
+            else:
+                return "No user found"
+        except sqlite3.Error as er:
+            print("---- ERROR COULD NOT WITHDRAW MONEY ----")
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+
+
 class Deposit():
 
     def AddDeposit(self, bankUserId, amount):
