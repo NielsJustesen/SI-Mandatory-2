@@ -1,7 +1,6 @@
 from flask import Flask, request, Response, Blueprint
 import sqlite3
 import json
-from address import address
 
 borger = Blueprint('borger', __name__)
 
