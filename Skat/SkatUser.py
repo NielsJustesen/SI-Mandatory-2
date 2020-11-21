@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, Blueprint
 import sqlite3
 import json
+import requests
 
 SkatUser = Blueprint('SkatUser', __name__)
 
@@ -64,3 +65,55 @@ def conn():
     return db
   except Exception as e:
     return { "status": f"db connection failed: {e}"}
+
+
+
+@SkatUser.route('/pay-taxes', methods=['POST'])
+def PayTaxes():
+  userId = request.args.get('UserId')
+  balance = request.args.get('Balance')
+
+  get_stmt = """SELECT IsPaid, Amount, id FROM SkatUserYear LEFT JOIN SkatUser ON SkatUserYear.SkatUserId = SkatUser.UserId WHERE SkatUser.UserId = ?"""
+
+  try:
+    db = sqlite3.connect("Skat.db")
+
+    db_cursor = db.cursor()
+
+    db.execute(get_stmt, userId)
+
+    skatUserYear = db_cursor.fetchall()
+
+    unpaidTaxes = []
+    for x in skatUserYear:
+      if x[0] is False or float(x[1]) > 0:
+        unpaidTaxes.append(x[0])
+    
+    for y in unpaidTaxes:
+      resp = request.get("http://localhost:7071/api/Skat_Tax_Calculator", params={"money":float(balance)})
+      
+      if resp.status == 200:
+        id = skatUserYear[2]
+        taxAmount = resp['tax_amount']
+        update_stmt = """UPDATE SkatUserYear SET IsPaid = true, Amount = ? WHERE id = ?"""
+    
+        db_cursor.execute(update_stmt, (taxAmount, id))
+
+        withdrawResp = requests.get("http://127.0.0.1:5000/withdraw-money", params={"UserId":userId, "Amount":taxAmount})
+        amountPaid = withdrawResp['Amount']
+
+        return Response(json.dumps({"Taxes":taxAmount}),status=200)
+      elif resp['tax_amount'] < float(0):
+        return Response(json.dumps({"Message":"Calculated tax was less than zero"}),status=400)
+
+
+
+        
+        
+      
+  except sqlite3.Error as e:
+    return {"status": f"failed paying taxes: {e}"}, 400
+
+
+# o Returns the calculated amount that needs to be paid.
+# o An error will be thrown if the value is negative.

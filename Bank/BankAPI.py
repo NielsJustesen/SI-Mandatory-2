@@ -134,7 +134,7 @@ def WithdrawMoney():
         success = account.Withdraw(userId, amount)
 
         if success == "Withdrawl done":
-            return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount withdrewn": float(amount)}))
+            return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount": float(amount), "UserId":userId}))
         elif success == "Not enough in account":
             return Response(json.dumps({"Message":"Not enough money in account"}), status=400)
         else:
