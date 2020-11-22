@@ -32,9 +32,9 @@ def read():
 
   db_cursor = db.cursor()
   get_stmt = "SELECT * FROM SkatUser WHERE id=?"
-  
+
   try:
-    db_cursor.execute(get_stmt, id)
+    db_cursor.execute(get_stmt, [id])
     SkatUser = db_cursor.fetchone()
 
     if SkatUser is None:

@@ -34,7 +34,7 @@ def read():
   get_stmt = "SELECT * FROM BorgerUser WHERE id=?"
   
   try:
-    db_cursor.execute(get_stmt, id)
+    db_cursor.execute(get_stmt, [id])
     user = db_cursor.fetchone()
 
     if user is None:
