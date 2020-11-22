@@ -55,9 +55,10 @@ def update():
   db = conn()
   id = request.args.get('id')
   isActive = request.args.get('IsActive')
+  data = [isActive, id]
   try:
-    update_stmt = "UPDATE SkatUser SET IsActive = ?"
-    db.execute(update_stmt, isActive)
+    update_stmt = "UPDATE SkatUser SET IsActive = ? WHERE id = ?"
+    db.execute(update_stmt, data)
     db.commit()
     db.close()
     return {"status": "successfully updated SkatUser"}, 200
