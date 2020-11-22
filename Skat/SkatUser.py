@@ -52,12 +52,30 @@ def read():
 
 @SkatUser.route('/skat-user', methods = ['PUT'])
 def update():
-  pass
+  db = conn()
+  id = request.args.get('id')
+  isActive = request.args.get('IsActive')
+  try:
+    update_stmt = "UPDATE SkatUser SET IsActive = ?"
+    db.execute(update_stmt, isActive)
+    db.commit()
+    db.close()
+    return {"status": "successfully updated SkatUser"}, 200
+  except Exception as e:
+    return {"status": f"failed updating SkatUser: {e}"}, 400
 
 @SkatUser.route('/skat-user', methods = ['DELETE'])
 def delete():
-  pass
-
+  db = conn()
+  id = request.args.get('id')
+  try:
+    delete_stmt = "DELETE SkatUser WHERE id = ?"
+    db.execute(delete_stmt, id)
+    db.commit()
+    db.close()
+    return {"status": "successfully deleted skat user"}, 200
+  except Exception as e:
+    return {"status": f"failed deleting SkatUser: {e}"}, 400
 
 def conn():
   try:
