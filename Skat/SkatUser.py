@@ -57,11 +57,15 @@ def update():
   isActive = request.args.get('IsActive')
   data = [isActive, id]
   try:
+    db_cursor = db.cursor()
     update_stmt = "UPDATE SkatUser SET IsActive = ? WHERE id = ?"
-    db.execute(update_stmt, data)
+    db_cursor.execute(update_stmt, data)
     db.commit()
     db.close()
-    return {"status": "successfully updated SkatUser"}, 200
+    if db_cursor.rowcount < 1:
+      return {"status":"record not found"}, 404
+    else:
+      return {"status": "successfully updated SkatUser"}, 200
   except Exception as e:
     return {"status": f"failed updating SkatUser: {e}"}, 400
 
@@ -70,11 +74,15 @@ def delete():
   db = conn()
   id = request.args.get('id')
   try:
+    db_cursor = db.cursor()
     delete_stmt = "DELETE SkatUser WHERE id = ?"
-    db.execute(delete_stmt, id)
+    db_cursor.execute(delete_stmt, id)
     db.commit()
     db.close()
-    return {"status": "successfully deleted skat user"}, 200
+    if db_cursor.rowcount < 1:
+      return {"status": "record not found"}, 404
+    else:
+      return {"status": "successfully deleted skat user"}, 200
   except Exception as e:
     return {"status": f"failed deleting SkatUser: {e}"}, 400
 
