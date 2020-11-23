@@ -86,16 +86,21 @@ class Account():
     #Account TABLE CRUD OPERATIONS
     def AddAccount(self, bankUserId, accountNo, isStudent, amount):
         try:
-            db = sqlite3.connect("Bank.db")
-            db_cur = db.cursor()
-            createdAt = datetime.now()
-            db_cur.execute("INSERT INTO Account VALUES (?,?,?,?,?,?,?)",  (None,  str(bankUserId), str(accountNo), str(isStudent), str(createdAt), None, str(amount)))
-            db.commit()
-            db.close()
-            if db_cur.rowcount < 1:
-                return False
+            b = BankUser()
+            bu = b.GetBankUser(bankUserId)
+            if b:
+                db = sqlite3.connect("Bank.db")
+                db_cur = db.cursor()
+                createdAt = datetime.now()
+                db_cur.execute("INSERT INTO Account VALUES (?,?,?,?,?,?,?)",  (None,  str(bankUserId), str(accountNo), str(isStudent), str(createdAt), None, str(amount)))
+                db.commit()
+                db.close()
+                if db_cur.rowcount < 1:
+                    return False
+                else:
+                    return True
             else:
-                return True
+                return False
         except sqlite3.Error as er:
             print("---- FAILED TO ADD NEW ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
