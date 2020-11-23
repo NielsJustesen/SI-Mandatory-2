@@ -6,22 +6,10 @@
         "DownstreamHostandPorts": [    
          {    
            "Host": "localhost",    
-           "Port": "5004"    
-          }     
-        ],    
-        "UpstreamPathTemplate": "/api/borger",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
-      },
-      {    
-        "DownstreamPathTemplate": "/skat-user",    
-        "DownstreamScheme": "http",
-        "DownstreamHostandPorts": [    
-         {    
-           "Host": "localhost",    
            "Port": "5003"    
           }     
         ],    
-        "UpstreamPathTemplate": "/api/skat-user",    
+        "UpstreamPathTemplate": "/api/borger",    
         "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
       },
       {    
@@ -30,10 +18,34 @@
         "DownstreamHostandPorts": [    
          {    
            "Host": "localhost",    
-           "Port": "5004"    
+           "Port": "5003"    
           }     
         ],    
         "UpstreamPathTemplate": "/api/address",    
+        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+      },
+      {    
+        "DownstreamPathTemplate": "/bank-user",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/bank-user",    
+        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+      },
+      {    
+        "DownstreamPathTemplate": "/account",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/account",    
         "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
       },
       {    
@@ -42,14 +54,74 @@
         "DownstreamHostandPorts": [    
          {    
            "Host": "localhost",    
-           "Port": "5005"    
+           "Port": "5004"    
           }     
         ],    
         "UpstreamPathTemplate": "/api/bank/add-deposit",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+        "UpstreamHttpMethod": [ "POST" ]
       },
       {    
-        "DownstreamPathTemplate": "/api/{controller}/{identifier}",    
+        "DownstreamPathTemplate": "/bank/list-deposits",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/bank/list-deposits",    
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {    
+        "DownstreamPathTemplate": "/bank/create-loan",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/bank/create-loan",    
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {    
+        "DownstreamPathTemplate": "/bank/pay-loan",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/bank/pay-loan",    
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {    
+        "DownstreamPathTemplate": "/bank/list-loans",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/bank/list-loans",    
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {    
+        "DownstreamPathTemplate": "/bank/withdraw-money",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5004"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/bank/withdraw-money",    
+        "UpstreamHttpMethod": [ "GET" ]
+      },
+      {    
+        "DownstreamPathTemplate": "/skat-user",    
         "DownstreamScheme": "http",
         "DownstreamHostandPorts": [    
          {    
@@ -57,11 +129,11 @@
            "Port": "5005"    
           }     
         ],    
-        "UpstreamPathTemplate": "/api/bank/{controller}/{identifier}",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+        "UpstreamPathTemplate": "/api/skat-user",    
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE"]
       },
       {    
-        "DownstreamPathTemplate": "/api/{controller}/{identifier}/{everything}",    
+        "DownstreamPathTemplate": "/skat-user/pay-taxes",    
         "DownstreamScheme": "http",
         "DownstreamHostandPorts": [    
          {    
@@ -69,44 +141,20 @@
            "Port": "5005"    
           }     
         ],    
-        "UpstreamPathTemplate": "/api/bank/{controller}/{identifier}/{everything}",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+        "UpstreamPathTemplate": "/api/skat-user/pay-taxes",    
+        "UpstreamHttpMethod": [ "POST" ]
       },
       {    
-        "DownstreamPathTemplate": "/api/{controller}/{everything}",    
+        "DownstreamPathTemplate": "/skat-year",    
         "DownstreamScheme": "http",
         "DownstreamHostandPorts": [    
          {    
            "Host": "localhost",    
-           "Port": "5006"    
+           "Port": "5005"    
           }     
         ],    
-        "UpstreamPathTemplate": "/api/skat/{controller}/{everything}",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
-      },
-      {    
-        "DownstreamPathTemplate": "/api/{controller}/{identifier}",    
-        "DownstreamScheme": "http",
-        "DownstreamHostandPorts": [    
-         {    
-           "Host": "localhost",    
-           "Port": "5006"    
-          }     
-        ],    
-        "UpstreamPathTemplate": "/api/skat/{controller}/{identifier}",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
-      },
-      {    
-        "DownstreamPathTemplate": "/api/{controller}/{identifier}/{everything}",    
-        "DownstreamScheme": "http",
-        "DownstreamHostandPorts": [    
-         {    
-           "Host": "localhost",    
-           "Port": "5006"    
-          }     
-        ],    
-        "UpstreamPathTemplate": "/api/skat/{controller}/{identifier}/{everything}",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+        "UpstreamPathTemplate": "/api/skat-year",    
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE"]
       },
       {
         "DownstreamPathTemplate": "/todos",
