@@ -253,7 +253,7 @@ class Loan():
             if (float(currentAmount) >= float(amount)):
                 db = sqlite3.connect("Bank.db")
                 db_cur = db.cursor()
-                db_cur.execute("SELECT Amount FROM Loan WHERE BankUserId = ?", (str(bankUserId)))
+                db_cur.execute("SELECT Amount FROM Loan WHERE BankUserId = ? AND Id = ?", (str(bankUserId), str(loanId)))
                 loan = db_cur.fetchone()
                 if float(loan[0]) > 0:
                     modifiedAt = datetime.now()
