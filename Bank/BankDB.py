@@ -126,17 +126,20 @@ class Account():
     def UpdateAccount(self, bankUserId, amount):
         try:
             oldAmount = self.GetAccount(bankUserId)[6]
-            db = sqlite3.connect("Bank.db")
-            db_cur = db.cursor()
-            modifiedAt = datetime.now()
-            newAmount = float(amount) + float(oldAmount)
-            db_cur.execute("UPDATE Account SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ?", (str(newAmount), str(modifiedAt), str(bankUserId)))
-            db.commit()
-            db.close()
-            if db_cur.rowcount < 1:
+            if oldAmount is None:
                 return False
             else:
-                return True
+                db = sqlite3.connect("Bank.db")
+                db_cur = db.cursor()
+                modifiedAt = datetime.now()
+                newAmount = float(amount) + float(oldAmount)
+                db_cur.execute("UPDATE Account SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ?", (str(newAmount), str(modifiedAt), str(bankUserId)))
+                db.commit()
+                db.close()
+                if db_cur.rowcount < 1:
+                    return False
+                else:
+                    return True
         except sqlite3.Error as er:
             print("---- FAILED TO UPDATE ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
