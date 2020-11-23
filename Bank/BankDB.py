@@ -36,7 +36,10 @@ class BankUser():
             cur.execute("SELECT * FROM BankUser WHERE Id = ?;", (str(userId)))
             user = cur.fetchone()
             db.close()
-            return user
+            if user:
+                return user
+            else:
+                return False
         except sqlite3.Error as er:
             print("--- FAILED TO SELECT BankUser ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -47,9 +50,14 @@ class BankUser():
         try:
             db = sqlite3.connect("Bank.db")
             modifiedAt = datetime.now()
-            db.execute("UPDATE BankUser SET ModifiedAt = ? WHERE Id = ?;", (str(modifiedAt), str(userId)))
+            db_cur = db.cursor()
+            db_cur.execute("UPDATE BankUser SET ModifiedAt = ? WHERE Id = ?;", (str(modifiedAt), str(userId)))
             db.commit()
             db.close()
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                return True
         except sqlite3.Error as er:
             print("--- FAIlED TO UPDATE BankUser ---")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -58,10 +66,14 @@ class BankUser():
     def DeleteBankUser(self, userId):
         try:
             db = sqlite3.connect("Bank.db")
-            db.execute("DELETE FROM BankUser WHERE Id = ?;", (str(userId)))
+            db_cur = db.cursor()
+            db_cur.execute("DELETE FROM BankUser WHERE Id = ?;", (str(userId)))
             db.commit()
             db.close()
-            return True
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                return True
         except sqlite3.Error as er:
             print("---- FAILED TO DELETE BankUser ---")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -75,10 +87,15 @@ class Account():
     def AddAccount(self, bankUserId, accountNo, isStudent, amount):
         try:
             db = sqlite3.connect("Bank.db")
+            db_cur = db.cursor()
             createdAt = datetime.now()
-            db.execute("INSERT INTO Account VALUES (?,?,?,?,?,?,?)",  (None,  str(bankUserId), str(accountNo), str(isStudent), str(createdAt), None, str(amount)))
+            db_cur.execute("INSERT INTO Account VALUES (?,?,?,?,?,?,?)",  (None,  str(bankUserId), str(accountNo), str(isStudent), str(createdAt), None, str(amount)))
             db.commit()
             db.close()
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                return True
         except sqlite3.Error as er:
             print("---- FAILED TO ADD NEW ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -91,7 +108,10 @@ class Account():
             cur.execute("""SELECT * FROM Account WHERE BankUserId = """ + str(bankUserId))
             account = cur.fetchone()
             db.close()
-            return account
+            if account:
+                return account
+            else:
+                return False
         except sqlite3.Error as er:
             print("---- FAILED TO SELECT ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -101,11 +121,16 @@ class Account():
         try:
             oldAmount = self.GetAccount(bankUserId)[6]
             db = sqlite3.connect("Bank.db")
+            db_cur = db.cursor()
             modifiedAt = datetime.now()
             newAmount = float(amount) + float(oldAmount)
-            db.execute("UPDATE Account SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ?", (str(newAmount), str(modifiedAt), str(bankUserId)))
+            db_cur.execute("UPDATE Account SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ?", (str(newAmount), str(modifiedAt), str(bankUserId)))
             db.commit()
             db.close()
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                return True
         except sqlite3.Error as er:
             print("---- FAILED TO UPDATE ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -114,10 +139,14 @@ class Account():
     def DeleteAccount(self, accountId):
         try:
             db = sqlite3.connect("Bank.db")
-            db.execute("DELETE FROM Account WHERE Id = ?;", (str(accountId)))
+            db_cur = db.cursor()
+            db_cur.execute("DELETE FROM Account WHERE Id = ?;", (str(accountId)))
             db.commit()
             db.close()
-            return True
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                return True
         except sqlite3.Error  as er:
             print("---- FAILED TO DELETE ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -130,7 +159,7 @@ class Account():
             cur = db.cursor()
             cur.execute("SELECT Amount FROM Account LEFT JOIN BankUser ON Account.BankUserId = BankUser.UserId WHERE BankUser.UserId = ?", (str(userId)))
             currentAmount = cur.fetchone()[0]
-            if currentAmount != None:
+            if currentAmount:
                 if (float(currentAmount) >= float(amount)):
                     currentAmount = float(currentAmount) - float(amount)
                     modifiedAt = datetime.now()
@@ -154,11 +183,16 @@ class Deposit():
         try:
             account = Account()
             db = sqlite3.connect("Bank.db")
+            db_cur = db.cursor()
             createdAt = datetime.now()
             db.execute("INSERT INTO Deposit VALUES (?,?,?,?)", (None, str(bankUserId), str(createdAt), str(amount)))
             db.commit()
             db.close()
             account.UpdateAccount(bankUserId, amount)
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                return True
         except sqlite3.Error as er:
             print("---- FAILED TO ADD NEW DEPOSIT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -171,7 +205,10 @@ class Deposit():
             cur.execute("SELECT amount FROM Deposit WHERE BankUserId = " + str(bankUserId))
             deposits = cur.fetchall()
             db.close()
-            return deposits
+            if deposits:                
+                return deposits
+            else:
+                return False
         except sqlite3.Error as er:
             print("---- FAILED TO GET DEPOSITS ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -182,12 +219,18 @@ class Loan():
     def CreateLoan(self, bankUserId, amount):
         try:
             db = sqlite3.connect("Bank.db")
+            db_cur = db.cursor()
             createdAt = datetime.now()
-            db.execute("INSERT INTO Loan VALUES (?,?,?,?,?)", (None, str(bankUserId), str(createdAt), None, str(amount)))
+            db_cur.execute("INSERT INTO Loan VALUES (?,?,?,?,?)", (None, str(bankUserId), str(createdAt), None, str(amount)))
             db.commit()
             db.close()
-            account = Account()
-            account.UpdateAccount(bankUserId, amount)
+            if db_cur.rowcount < 1:
+                return False
+            else:
+                account = Account()
+                account.UpdateAccount(bankUserId, amount)
+                return True
+
         except sqlite3.Error as er:
             print("---- FAILED TO CREATE LOAN ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -200,13 +243,17 @@ class Loan():
             print(currentAmount)
             if (float(currentAmount) >= float(amount)):
                 db = sqlite3.connect("Bank.db")
+                db_cur = db.cursor()
                 modifiedAt = datetime.now()
-                db.execute("UPDATE Loan SET Amount = 0, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(modifiedAt), str(bankUserId), str(loanId)))
+                db_cur.execute("UPDATE Loan SET Amount = 0, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(modifiedAt), str(bankUserId), str(loanId)))
                 db.commit()
                 db.close()
-                withdrawl = 0 - float(amount)
-                account.UpdateAccount(bankUserId, withdrawl)
-                return True
+                if db_cur.rowcount < 1:
+                    return False
+                else:
+                    withdrawl = 0 - float(amount)
+                    account.UpdateAccount(bankUserId, withdrawl)
+                    return True
             else:
                 return False
         except sqlite3.Error as er:
@@ -216,13 +263,15 @@ class Loan():
 
     def GetUnpaidLoans(self, bankUserId):
         try:
-            print("sovs")
             db = sqlite3.connect("Bank.db")
             cur = db.cursor()
             cur.execute("SELECT Amount FROM Loan WHERE BankUserId = ? AND Amount > 0", (str(bankUserId)))
             loans = cur.fetchall()
             db.close()
-            return loans
+            if loans:
+                return loans
+            else:
+                return False
         except sqlite3.Error as er:
             print("---- FAILED TO LIST LOANS ----")
             print('SQLite error: %s' % (' '.join(er.args)))
