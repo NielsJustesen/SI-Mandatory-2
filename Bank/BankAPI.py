@@ -28,7 +28,7 @@ def AddDeposit():
             "Deposit": str(amount)
         }
 
-        resp = requests.get("http://localhost:7071/api/InterestRate", params=parameters)
+        resp = requests.post("http://localhost:7071/api/InterestRate", params=parameters)
         newAmount = resp.json()['Deposit']
         d.AddDeposit(bankUserId, newAmount)
         return Response(json.dumps({"Message":"Deposit was succesful", "Deposited": float(amount)}),status=201)
@@ -69,7 +69,7 @@ def CreateLoan():
             "loanAmount": str(loanAmount)
         }
 
-        resp = requests.get("http://localhost:7071/api/ValidateLoan", params=parameters)
+        resp = requests.post("http://localhost:7071/api/ValidateLoan", params=parameters)
         validation = resp.json()['Valid']
 
     else:
@@ -95,10 +95,11 @@ def PayLoan():
         amount = request.args['Amount']
 
         loan = Loan()
-        if (loan.PayLoan(bankUserId, loanId, amount)):
+        resp = (loan.PayLoan(bankUserId, loanId, amount))
+        if resp == "Successfully paid loan":
             return Response(json.dumps({"Message":"Succesfully paid load", "Amount":str(amount)}))
         else:
-            return Response(json.dumps({"Message":"Not enought money to pay loan"}), status=406)
+            return Response(json.dumps({"Message":resp}), status=406)
         
     else:
         return Response(json.dumps({"Message":"Bad Request"}), status=400)

@@ -31,7 +31,7 @@ def read():
   id = request.args.get('id')
 
   db_cursor = db.cursor()
-  get_stmt = "SELECT * FROM SkatUser WHERE id=?"
+  get_stmt = "SELECT * FROM SkatUser WHERE UserId=?"
 
   try:
     db_cursor.execute(get_stmt, [id])
@@ -54,11 +54,11 @@ def read():
 def update():
   db = conn()
   id = request.args.get('id')
-  isActive = request.args.get('IsActive')
-  data = [isActive, id]
+  json_data = request.get_json()
+  data = [json_data['IsActive'], id]
   try:
     db_cursor = db.cursor()
-    update_stmt = "UPDATE SkatUser SET IsActive = ? WHERE id = ?"
+    update_stmt = "UPDATE SkatUser SET IsActive = ? WHERE UserId = ?"
     db_cursor.execute(update_stmt, data)
     db.commit()
     db.close()
@@ -75,7 +75,7 @@ def delete():
   id = request.args.get('id')
   try:
     db_cursor = db.cursor()
-    delete_stmt = "DELETE SkatUser WHERE id = ?"
+    delete_stmt = "DELETE FROM SkatUser WHERE UserId = ?"
     db_cursor.execute(delete_stmt, id)
     db.commit()
     db.close()
@@ -111,27 +111,33 @@ def PayTaxes():
 
     skatUserYear = db_cursor.fetchone()
 
-    # unpaidTaxes = [] 
-    # for x in skatUserYear:
+    if skatUserYear is None:
+      return {"status": "SkatUserYear not found"}, 404
+
     if skatUserYear[0] == "0" or float(skatUserYear[1]) <= 0:
-      # unpaidTaxes.append(skatUserYear[0])
       parameters = {
           "money": float(balance)
       } 
-      # for y in unpaidTaxes:
+
+
       resp = requests.post("http://localhost:7071/api/Skat_Tax_Calculator", data=json.dumps(parameters))
-      print(resp.json()['tax_money'])
+
       if resp.status_code == 200:
-        id = skatUserYear[2]
         taxAmount = resp.json()['tax_money']
+
+        withdrawResp = requests.get("http://127.0.0.1:5000/bank/withdraw-money", params={"UserId":userId, "Amount":taxAmount})
+        amountPaid = withdrawResp.json()['Amount']
+
+        if amountPaid < 0:
+          return {"status": "failure"}, 400
+
+        id = skatUserYear[2]
+        
         update_stmt = """UPDATE SkatUserYear SET IsPaid = 1, Amount = ? WHERE id = ?"""
     
         db_cursor.execute(update_stmt, (taxAmount, id))
         db.commit()
         db.close()
-
-        withdrawResp = requests.get("http://127.0.0.1:5000/withdraw-money", params={"UserId":userId, "Amount":taxAmount})
-        amountPaid = withdrawResp.json()['Amount']
 
         return Response(json.dumps({"Taxes":amountPaid}),status=200)
       elif resp.json()['tax_money'] < float(0):
