@@ -254,7 +254,7 @@ class Loan():
                 db = sqlite3.connect("Bank.db")
                 db_cur = db.cursor()
                 db_cur.execute("SELECT Amount FROM Loan WHERE BankUserId = ?", (str(bankUserId)))
-                laon = db_cur.fetchone()
+                loan = db_cur.fetchone()
                 if float(loan[0]) > 0:
                     modifiedAt = datetime.now()
                     currentAmount -= amount
