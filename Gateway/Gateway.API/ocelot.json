@@ -13,7 +13,19 @@
         "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
       },
       {    
-        "DownstreamPathTemplate": "/api/{controller}/{identifier}/{everything}",    
+        "DownstreamPathTemplate": "/skat-user",    
+        "DownstreamScheme": "http",
+        "DownstreamHostandPorts": [    
+         {    
+           "Host": "localhost",    
+           "Port": "5003"    
+          }     
+        ],    
+        "UpstreamPathTemplate": "/api/skat-user",    
+        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
+      },
+      {    
+        "DownstreamPathTemplate": "/address",    
         "DownstreamScheme": "http",
         "DownstreamHostandPorts": [    
          {    
@@ -21,23 +33,11 @@
            "Port": "5004"    
           }     
         ],    
-        "UpstreamPathTemplate": "/api/borger/{controller}}/{identifier}/{everything}",    
+        "UpstreamPathTemplate": "/api/address",    
         "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
       },
       {    
-        "DownstreamPathTemplate": "/api/{controller}",    
-        "DownstreamScheme": "http",
-        "DownstreamHostandPorts": [    
-         {    
-           "Host": "localhost",    
-           "Port": "5004"    
-          }     
-        ],    
-        "UpstreamPathTemplate": "/api/borger/{controller}",    
-        "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
-      },
-      {    
-        "DownstreamPathTemplate": "/bank",    
+        "DownstreamPathTemplate": "/bank/add-deposit",    
         "DownstreamScheme": "http",
         "DownstreamHostandPorts": [    
          {    
@@ -45,7 +45,7 @@
            "Port": "5005"    
           }     
         ],    
-        "UpstreamPathTemplate": "/api/bank/",    
+        "UpstreamPathTemplate": "/api/bank/add-deposit",    
         "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PUT"]
       },
       {    

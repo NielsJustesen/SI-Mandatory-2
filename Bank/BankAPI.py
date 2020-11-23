@@ -1,14 +1,17 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, Blueprint
 import sqlite3
 import json
 import sys
 import requests
 from datetime import datetime
 from BankDB import Account, BankUser, Loan, Deposit
+from BankUserApi import BankUserApi
 app = Flask(__name__)
 
+app.register_blueprint(BankUserApi)
 
-@app.route('/add-deposit', methods = ['POST'])
+
+@app.route('/bank/add-deposit', methods = ['POST'])
 def AddDeposit():
     bankUserId = ""
     amount = ""
@@ -28,7 +31,7 @@ def AddDeposit():
         d.AddDeposit(bankUserId, newAmount)
         return Response(json.dumps({"Message":"Deposit was succesful", "Deposited": float(amount)}),status=201)
 
-@app.route('/list-deposits', methods = ['GET'])
+@app.route('/bank/list-deposits', methods = ['GET'])
 def ListDeposits():
     if 'BankUserId' in request.args:
         bankUserId = request.args["BankUserId"]
@@ -46,7 +49,7 @@ def ListDeposits():
     if deposits:
         return Response(json.dumps({"deposits":returnObj}), status=200, mimetype='application/json')
 
-@app.route('/create-loan', methods = ['POST'])
+@app.route('/bank/create-loan', methods = ['POST'])
 def CreateLoan():
 
     bankUserId = ""
@@ -77,7 +80,7 @@ def CreateLoan():
         l.CreateLoan(bankUserId, loanAmount)
         return Response(json.dumps({"Message":"Loan was created"}), status=201)
 
-@app.route('/pay-loan', methods=['POST'])
+@app.route('/bank/pay-loan', methods=['POST'])
 def PayLoan():
 
     bankUserId = ""
@@ -99,7 +102,7 @@ def PayLoan():
         return Response(json.dumps({"Message":"Bad Request"}), status=400)
 
     
-@app.route('/list-loans', methods=['GET'])
+@app.route('/bank/list-loans', methods=['GET'])
 def ListLoans():
 
     bankUserId = ""
@@ -121,7 +124,7 @@ def ListLoans():
 
 
 
-@app.route('/withdraw-money', methods=['GET'])
+@app.route('/bank/withdraw-money', methods=['GET'])
 def WithdrawMoney():
 
     amount = ""

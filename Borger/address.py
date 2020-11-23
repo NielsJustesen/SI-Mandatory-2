@@ -69,24 +69,27 @@ def update():
   id = request.args.get('id')
   data = request.get_json()
 
-  update_data = [data['address'], id]
-
   db_cursor = db.cursor()
-  update_stmt = """UPDATE Address SET Address=? WHERE id=?"""
-  get_stmt = "SELECT isvalid FROM Address WHERE id=?"
+
+  update_stmt = "UPDATE Address SET IsValid=0 WHERE IsValid=1 AND BorgerUserId=?"
+  get_stmt = "SELECT id FROM Address WHERE id=?"
 
   try:
-    db_cursor.execute(get_stmt, id)
+    db_cursor.execute(get_stmt, [id])
     address = db_cursor.fetchone()
-
+    
     if address is None:
-      return {"status": "address not found"}, 404
-    elif address[0] == 0:
-      return {"status": "can't update non-active address"}, 200
+      return {"status": "address not found"}
     else:
-      db_cursor.execute(update_stmt, update_data)    
+      db_cursor.execute(update_stmt, [data['borgerUserId']])    
       db.commit()
-      db.close()
+    update_stmt = """UPDATE Address SET IsValid=1 WHERE id=?"""
+    db_cursor.execute(update_stmt, [id])
+    db.commit()
+    db.close()
+    if db_cursor.rowcount < 1:
+      return {"status": "Address not found"}, 404
+    else:  
       return {"status": "address update successful"}, 201
   except Exception as e:
     return {"status": f"failed updating address: {e}"}, 400

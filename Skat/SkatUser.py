@@ -87,49 +87,49 @@ def conn():
 
 
 
-@SkatUser.route('/pay-taxes', methods=['POST'])
+@SkatUser.route('/skat-user/pay-taxes', methods=['POST'])
 def PayTaxes():
   userId = request.args.get('UserId')
   balance = request.args.get('Balance')
 
-  get_stmt = """SELECT IsPaid, Amount, id FROM SkatUserYear LEFT JOIN SkatUser ON SkatUserYear.SkatUserId = SkatUser.UserId WHERE SkatUser.UserId = ?"""
+  get_stmt = """SELECT IsPaid, Amount, SkatUserYear.id FROM SkatUserYear LEFT JOIN SkatUser ON SkatUserYear.UserId = SkatUser.UserId WHERE SkatUser.UserId = ? AND SkatUseryear.IsPaid = 0"""
 
   try:
     db = sqlite3.connect("Skat.db")
 
     db_cursor = db.cursor()
 
-    db.execute(get_stmt, userId)
+    db_cursor.execute(get_stmt, userId)
 
-    skatUserYear = db_cursor.fetchall()
+    skatUserYear = db_cursor.fetchone()
 
-    unpaidTaxes = []
-    for x in skatUserYear:
-      if x[0] is False or float(x[1]) > 0:
-        unpaidTaxes.append(x[0])
-    
-    for y in unpaidTaxes:
-      resp = request.get("http://localhost:7071/api/Skat_Tax_Calculator", params={"money":float(balance)})
-      
-      if resp.status == 200:
+    # unpaidTaxes = [] 
+    # for x in skatUserYear:
+    if skatUserYear[0] == "0" or float(skatUserYear[1]) <= 0:
+      # unpaidTaxes.append(skatUserYear[0])
+      parameters = {
+          "money": float(balance)
+      } 
+      # for y in unpaidTaxes:
+      resp = requests.post("http://localhost:7071/api/Skat_Tax_Calculator", data=json.dumps(parameters))
+      print(resp.json()['tax_money'])
+      if resp.status_code == 200:
         id = skatUserYear[2]
-        taxAmount = resp['tax_amount']
-        update_stmt = """UPDATE SkatUserYear SET IsPaid = true, Amount = ? WHERE id = ?"""
+        taxAmount = resp.json()['tax_money']
+        update_stmt = """UPDATE SkatUserYear SET IsPaid = 1, Amount = ? WHERE id = ?"""
     
         db_cursor.execute(update_stmt, (taxAmount, id))
+        db.commit()
+        db.close()
 
         withdrawResp = requests.get("http://127.0.0.1:5000/withdraw-money", params={"UserId":userId, "Amount":taxAmount})
-        amountPaid = withdrawResp['Amount']
+        amountPaid = withdrawResp.json()['Amount']
 
-        return Response(json.dumps({"Taxes":taxAmount}),status=200)
-      elif resp['tax_amount'] < float(0):
+        return Response(json.dumps({"Taxes":amountPaid}),status=200)
+      elif resp.json()['tax_money'] < float(0):
         return Response(json.dumps({"Message":"Calculated tax was less than zero"}),status=400)
-
-
-
-        
-        
-      
+    else:
+      return {"status": "sssss"}
   except sqlite3.Error as e:
     return {"status": f"failed paying taxes: {e}"}, 400
 

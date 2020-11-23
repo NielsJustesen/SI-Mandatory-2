@@ -5,7 +5,9 @@ import json
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
         req_body = req.get_json()
+        
     except ValueError:
+        print(req.get_json())
         return func.HttpResponse(status_code=404)
     else:
         amount = req_body.get('money')

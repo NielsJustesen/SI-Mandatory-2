@@ -15,10 +15,15 @@ class BankUser():
     def AddBankUser(self, userId):
         try:
             db = sqlite3.connect("Bank.db")
+            db_cursor = db.cursor()
             createdAt = datetime.now()
-            db.execute("INSERT INTO BankUser VALUES (?,?,?,?)", (None, str(userId), str(createdAt), None))
+            db_cursor.execute("INSERT INTO BankUser VALUES (?,?,?,?)", (None, str(userId), str(createdAt), None))
             db.commit()
             db.close()
+            if db_cursor.rowcount < 1:
+              return False
+            else:
+              return True
         except sqlite3.Error as er:
             print("---- FAILED TO INSERT BankUser ----")
             print('SQLite error: %s' % (' '.join(er.args)))
