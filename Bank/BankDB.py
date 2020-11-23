@@ -255,10 +255,11 @@ class Loan():
                 db_cur = db.cursor()
                 db_cur.execute("SELECT Amount FROM Loan WHERE BankUserId = ? AND Id = ?", (str(bankUserId), str(loanId)))
                 loan = db_cur.fetchone()
-                if float(loan[0]) > 0:
+                currentLoan = loan[0]
+                if float(currentLoan) > 0:
                     modifiedAt = datetime.now()
-                    currentAmount -= amount
-                    db_cur.execute("UPDATE Loan SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(currentAmount), str(modifiedAt), str(bankUserId), str(loanId)))
+                    currentLoan = float(currentLoan) - float(amount)
+                    db_cur.execute("UPDATE Loan SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(currentLoan), str(modifiedAt), str(bankUserId), str(loanId)))
                     db.commit()
                     db.close()
                     if db_cur.rowcount < 1:
