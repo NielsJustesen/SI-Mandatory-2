@@ -5,7 +5,8 @@ import sys
 import requests
 from datetime import datetime
 from BankDB import Account, BankUser, Loan, Deposit
-from BankUserApi import BankUserApi
+from BankUserAPI import BankUserApi
+from AccountAPI import AccountApi
 app = Flask(__name__)
 
 app.register_blueprint(BankUserApi)
