@@ -125,14 +125,14 @@ class Account():
 
     def UpdateAccount(self, bankUserId, amount):
         try:
-            oldAmount = self.GetAccount(bankUserId)[6]
-            if oldAmount is None:
+            account = self.GetAccount(bankUserId)
+            if account is False:
                 return False
             else:
                 db = sqlite3.connect("Bank.db")
                 db_cur = db.cursor()
                 modifiedAt = datetime.now()
-                newAmount = float(amount) + float(oldAmount)
+                newAmount = float(amount) + float(account[6])
                 db_cur.execute("UPDATE Account SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ?", (str(newAmount), str(modifiedAt), str(bankUserId)))
                 db.commit()
                 db.close()
