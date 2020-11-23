@@ -263,15 +263,15 @@ class Loan():
                     db.commit()
                     db.close()
                     if db_cur.rowcount < 1:
-                        return False
+                        return "Failed to pay loan"
                     else:
                         withdrawl = 0 - float(amount)
                         account.UpdateAccount(bankUserId, withdrawl)
-                        return True
+                        return "Successfully paid loan"
                 else:
-                    return False
+                    return "Loan is paid already"
             else:
-                return False
+                return "Not enough money in account"
         except sqlite3.Error as er:
             print("---- FAILED TO PAY LOAN ----")
             print('SQLite error: %s' % (' '.join(er.args)))
