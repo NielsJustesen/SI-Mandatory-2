@@ -33,7 +33,7 @@ class BankUser():
         try:
             db = sqlite3.connect("Bank.db")
             cur = db.cursor()
-            cur.execute("SELECT * FROM BankUser WHERE Id = ?;", (str(userId)))
+            cur.execute("SELECT * FROM BankUser WHERE Id = ?;", [userId])
             user = cur.fetchone()
             db.close()
             if user:
@@ -88,7 +88,10 @@ class Account():
         try:
             b = BankUser()
             bu = b.GetBankUser(bankUserId)
-            if b:
+            print(bu)
+            if bu is False:
+              return False
+            else:
                 db = sqlite3.connect("Bank.db")
                 db_cur = db.cursor()
                 createdAt = datetime.now()
@@ -99,8 +102,6 @@ class Account():
                     return False
                 else:
                     return True
-            else:
-                return False
         except sqlite3.Error as er:
             print("---- FAILED TO ADD NEW ACCOUNT ----")
             print('SQLite error: %s' % (' '.join(er.args)))
@@ -110,7 +111,7 @@ class Account():
         try:
             db = sqlite3.connect("Bank.db")
             cur = db.cursor()
-            cur.execute("""SELECT * FROM Account WHERE BankUserId = """ + str(bankUserId))
+            cur.execute("""SELECT * FROM Account WHERE BankUserId = ?""", [bankUserId])
             account = cur.fetchone()
             db.close()
             if account:

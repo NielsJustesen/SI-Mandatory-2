@@ -16,9 +16,9 @@ def create():
 
 @BankUserApi.route('/bank-user', methods=['GET'])
 def read():
-  data = request.get_json()
+  data = request.args.get('id')
   bu = BankUser()
-  result = bu.GetBankUser(data['userId'])
+  result = bu.GetBankUser(data)
   if result is None:
     return {"status": "user not found"}, 422
   else:
@@ -27,9 +27,9 @@ def read():
 
 @BankUserApi.route('/bank-user', methods=['PUT'])
 def update():
-  data = request.get_json()
+  id = request.args.get('id')
   bu = BankUser()
-  result = bu.UpdateBankUser(data['userId'])
+  result = bu.UpdateBankUser(id)
   if result:
     return {"user": result}, 201
   else:
@@ -37,9 +37,9 @@ def update():
 
 @BankUserApi.route('/bank-user', methods=['DELETE'])
 def delete():
-  data = request.get_json()
+  id = request.args.get('id')
   bu = BankUser()
-  result = bu.DeleteBankUser(data['userId'])
+  result = bu.DeleteBankUser(id)
   if result:
     return {"status": "user deleted"}, 201
   else:

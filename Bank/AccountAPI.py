@@ -16,9 +16,9 @@ def create():
 
 @AccountApi.route('/account', methods=['GET'])
 def read():
-  data = request.get_json()
+  id = request.args.get('id')
   a = Account()
-  result = a.GetAccount(data['bankUserId'])
+  result = a.GetAccount(id)
   if result is None:
     return {"status": "account not found"}
   else:
@@ -27,9 +27,10 @@ def read():
 
 @AccountApi.route('/account', methods=['PUT'])
 def update():
+  id = request.args.get('id')
   data = request.get_json()
   a = Account()
-  result = a.UpdateAccount(data['bankUserId'], data['amount'])
+  result = a.UpdateAccount(id, data['amount'])
   if result:
     return {"status": "account updated"}
   else:
@@ -37,9 +38,9 @@ def update():
 
 @AccountApi.route('/account', methods=['DELETE'])
 def delete():
-  data = request.get_json()
+  id = request.args.get('id')
   a = Account()
-  result = a.DeleteAccount(data['account'])
+  result = a.DeleteAccount(id)
   if result:
     return {"status": "account deleted"}
   else:

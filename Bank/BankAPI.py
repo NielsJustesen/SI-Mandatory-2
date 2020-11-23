@@ -10,6 +10,7 @@ from AccountAPI import AccountApi
 app = Flask(__name__)
 
 app.register_blueprint(BankUserApi)
+app.register_blueprint(AccountApi)
 
 
 @app.route('/bank/add-deposit', methods = ['POST'])
