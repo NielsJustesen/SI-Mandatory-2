@@ -20,9 +20,9 @@ def read():
   a = Account()
   result = a.GetAccount(id)
   if result is None:
-    return {"status": "account not found"}
+    return {"status": "account not found"}, 404
   else:
-    return {"account": result}
+    return {"account": result}, 200
     
 
 @AccountApi.route('/account', methods=['PUT'])
@@ -32,9 +32,9 @@ def update():
   a = Account()
   result = a.UpdateAccount(id, data['amount'])
   if result:
-    return {"status": "account updated"}
+    return {"status": "account updated"}, 200
   else:
-    return {"status": "update failed"}
+    return {"status": "update failed"}, 422
 
 @AccountApi.route('/account', methods=['DELETE'])
 def delete():
@@ -42,6 +42,6 @@ def delete():
   a = Account()
   result = a.DeleteAccount(id)
   if result:
-    return {"status": "account deleted"}
+    return {"status": "account deleted"}, 200
   else:
-    return {"status": "deletion failed"}
+    return {"status": "deletion failed"}, 400

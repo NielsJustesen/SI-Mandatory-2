@@ -90,7 +90,7 @@ def update():
     else:
      return {"status": "SkatYear has been updated"}, 200
   except Exception as e:
-    return {"status": f"update failed: {e}"}
+    return {"status": f"update failed: {e}"}, 400
 
 @SkatYear.route('/skat-year', methods=['DELETE'])
 def delete():
@@ -113,7 +113,7 @@ def delete():
     else:
       return {"status": "SkatYear deleted"}, 200
   except Exception as e:
-    return {"status": f"deletion failed: {e}"}
+    return {"status": f"deletion failed: {e}"}, 400
 
 def conn():
   try:

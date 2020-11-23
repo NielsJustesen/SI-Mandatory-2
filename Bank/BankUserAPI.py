@@ -20,9 +20,9 @@ def read():
   bu = BankUser()
   result = bu.GetBankUser(data)
   if result is None:
-    return {"status": "user not found"}, 422
+    return {"status": "user not found"}, 404
   else:
-    return {"user": result}, 201
+    return {"user": result}, 200
     
 
 @BankUserApi.route('/bank-user', methods=['PUT'])
@@ -33,7 +33,7 @@ def update():
   if result:
     return {"user": result}, 201
   else:
-    return {"status": "user not found"}, 422
+    return {"status": "user not found"}, 404
 
 @BankUserApi.route('/bank-user', methods=['DELETE'])
 def delete():
@@ -41,6 +41,6 @@ def delete():
   bu = BankUser()
   result = bu.DeleteBankUser(id)
   if result:
-    return {"status": "user deleted"}, 201
+    return {"status": "user deleted"}, 200
   else:
-    return {"status": "user not found"}, 422
+    return {"status": "user not found"}, 404

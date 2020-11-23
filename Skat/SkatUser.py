@@ -142,8 +142,8 @@ def PayTaxes():
         return Response(json.dumps({"Taxes":amountPaid}),status=200)
       elif resp.json()['tax_money'] < float(0):
         return Response(json.dumps({"Message":"Calculated tax was less than zero"}),status=400)
-    else:
-      return {"status": "sssss"}
+    # else:
+    #   return {"status": "failed"}, 400
   except sqlite3.Error as e:
     return {"status": f"failed paying taxes: {e}"}, 400
 

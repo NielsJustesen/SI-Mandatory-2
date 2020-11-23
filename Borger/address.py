@@ -61,8 +61,7 @@ def read():
 
 @address.route("/address", methods = ["PUT"])
 # Update user with specified id
-# Non-active addresses cannot be updated
-# Only the "address" attribute can be updated
+# Non-active addresses cannot be updateds
 def update():
   db = conn()
 
@@ -90,7 +89,7 @@ def update():
     if db_cursor.rowcount < 1:
       return {"status": "Address not found"}, 404
     else:  
-      return {"status": "address update successful"}, 201
+      return {"status": "address update successful"}, 200
   except Exception as e:
     return {"status": f"failed updating address: {e}"}, 400
 
@@ -110,7 +109,7 @@ def delete():
     db.close()
     return {"status": "address deleted"}, 200
   except Exception as e:
-    return {"status": f"deletion failed: {e}"}
+    return {"status": f"deletion failed: {e}"}, 400
 
 def conn():
   try:

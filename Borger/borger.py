@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, Blueprint
+from flask import Flask, request, Blueprint
 import sqlite3
 import json
 
@@ -18,7 +18,7 @@ def create():
     db_cursor.execute(create_stmt, UserId)
     db.commit()
     db.close()
-    return Response(json.dumps({"status": "user created"}), status=201)
+    return {"status": "user created"}, 201
   except Exception as e:
     return {"status": f"user creation failed: {e}"}, 400
 
@@ -79,7 +79,7 @@ def update():
       db_cursor.execute(update_addresses_stmt, update_addresses_data)
       db.commit()
       db.close()
-      return {"status": "borger update successful"}, 201
+      return {"status": "borger update successful"}, 200
   except Exception as e:
     return {"status": f"failed updating borger: {e}"}, 400
 
@@ -101,7 +101,7 @@ def delete():
     db.close()
     return {"status": "user deleted"}, 200
   except Exception as e:
-    return {"status": f"deletion failed: {e}"}
+    return {"status": f"deletion failed: {e}"}, 400
 
 def conn():
   try:

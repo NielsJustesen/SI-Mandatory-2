@@ -47,7 +47,7 @@ def ListDeposits():
         for x in deposits:
             returnObj.append(x[0])
     else:
-        return Response(json.dumps({"error": "Bad Request"}), status=400)
+        return Response(json.dumps({"error": "deposits not found"}), status=404)
     if deposits:
         return Response(json.dumps({"deposits":returnObj}), status=200, mimetype='application/json')
 
@@ -76,7 +76,7 @@ def CreateLoan():
         return Response(json.dumps({"Message": "Bad Request"}), status=400)
 
     if (validation == "False"):
-        return Response(json.dumps({"Message":"Unacceptable: Loan is to big"}), status=406)
+        return Response(json.dumps({"Message":"Unacceptable: Loan is to big"}), status=422)
     elif (validation == "True"):
         l = Loan()
         l.CreateLoan(bankUserId, loanAmount)
@@ -97,9 +97,9 @@ def PayLoan():
         loan = Loan()
         resp = (loan.PayLoan(bankUserId, loanId, amount))
         if resp == "Successfully paid loan":
-            return Response(json.dumps({"Message":"Succesfully paid load", "Amount":str(amount)}))
+            return Response(json.dumps({"Message":"Succesfully paid load", "Amount":str(amount)}), status=200)
         else:
-            return Response(json.dumps({"Message":resp}), status=406)
+            return Response(json.dumps({"Message":resp}), status=400)
         
     else:
         return Response(json.dumps({"Message":"Bad Request"}), status=400)
@@ -140,11 +140,11 @@ def WithdrawMoney():
         success = account.Withdraw(userId, amount)
 
         if success == "Withdrawl done":
-            return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount": float(amount), "UserId":userId}))
+            return Response(json.dumps({"Message":"Withdrawl was succesful", "Amount": float(amount), "UserId":userId}), status=200)
         elif success == "Not enough in account":
             return Response(json.dumps({"Message":"Not enough money in account"}), status=400)
         else:
-            return Response(json.dumps({"Message":"No user found"}), status=400)
+            return Response(json.dumps({"Message":"No user found"}), status=404)
     else:
         return Response(json.dumps({"Message":"Bag Request"}), status=400)
     
