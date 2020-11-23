@@ -258,16 +258,19 @@ class Loan():
                 currentLoan = loan[0]
                 if float(currentLoan) > 0:
                     modifiedAt = datetime.now()
-                    currentLoan = float(currentLoan) - float(amount)
-                    db_cur.execute("UPDATE Loan SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(currentLoan), str(modifiedAt), str(bankUserId), str(loanId)))
-                    db.commit()
-                    db.close()
-                    if db_cur.rowcount < 1:
-                        return "Failed to pay loan"
+                    if float(amount) > float(currentLoan):
+                        return f"Amount to pay with exceeds the amount of the loan. Loan: {currentLoan}, Entered Amount: {amount}"
                     else:
-                        withdrawl = 0 - float(amount)
-                        account.UpdateAccount(bankUserId, withdrawl)
-                        return "Successfully paid loan"
+                        currentLoan = float(currentLoan) - float(amount)
+                        db_cur.execute("UPDATE Loan SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(currentLoan), str(modifiedAt), str(bankUserId), str(loanId)))
+                        db.commit()
+                        db.close()
+                        if db_cur.rowcount < 1:
+                            return "Failed to pay loan"
+                        else:
+                            withdrawl = 0 - float(amount)
+                            account.UpdateAccount(bankUserId, withdrawl)
+                            return "Successfully paid loan"
                 else:
                     return "Loan is paid already"
             else:
