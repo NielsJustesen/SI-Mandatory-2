@@ -253,16 +253,22 @@ class Loan():
             if (float(currentAmount) >= float(amount)):
                 db = sqlite3.connect("Bank.db")
                 db_cur = db.cursor()
-                modifiedAt = datetime.now()
-                db_cur.execute("UPDATE Loan SET Amount = 0, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(modifiedAt), str(bankUserId), str(loanId)))
-                db.commit()
-                db.close()
-                if db_cur.rowcount < 1:
-                    return False
+                db_cur.execute("SLECET Amount FROM Loan WHERE BankUserId = ?", (str(bankUserId)))
+                currentLoanAmount = db_cur.fetchone()[4]
+                if currentLoanAmount > 0:
+                    modifiedAt = datetime.now()
+                    currentAmount -= amount
+                    db_cur.execute("UPDATE Loan SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(currentAmount), str(modifiedAt), str(bankUserId), str(loanId)))
+                    db.commit()
+                    db.close()
+                    if db_cur.rowcount < 1:
+                        return False
+                    else:
+                        withdrawl = 0 - float(amount)
+                        account.UpdateAccount(bankUserId, withdrawl)
+                        return True
                 else:
-                    withdrawl = 0 - float(amount)
-                    account.UpdateAccount(bankUserId, withdrawl)
-                    return True
+                    return False
             else:
                 return False
         except sqlite3.Error as er:
