@@ -253,9 +253,9 @@ class Loan():
             if (float(currentAmount) >= float(amount)):
                 db = sqlite3.connect("Bank.db")
                 db_cur = db.cursor()
-                db_cur.execute("SLECET Amount FROM Loan WHERE BankUserId = ?", (str(bankUserId)))
+                db_cur.execute("SELECT Amount FROM Loan WHERE BankUserId = ?", (str(bankUserId)))
                 laon = db_cur.fetchone()
-                if float(loan[4]) > 0:
+                if float(loan[0]) > 0:
                     modifiedAt = datetime.now()
                     currentAmount -= amount
                     db_cur.execute("UPDATE Loan SET Amount = ?, ModifiedAt = ? WHERE BankUserId = ? AND Id = ?", (str(currentAmount), str(modifiedAt), str(bankUserId), str(loanId)))
