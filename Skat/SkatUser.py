@@ -120,7 +120,7 @@ def PayTaxes():
       } 
 
 
-      resp = requests.post("http://localhost:7071/api/Skat_Tax_Calculator", data=json.dumps(parameters))
+      resp = requests.post("http://localhost:7072/api/Skat_Tax_Calculator", data=json.dumps(parameters))
 
       if resp.status_code == 200:
         taxAmount = resp.json()['tax_money']
