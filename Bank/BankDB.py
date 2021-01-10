@@ -33,7 +33,7 @@ class BankUser():
         try:
             db = sqlite3.connect("Bank.db")
             cur = db.cursor()
-            cur.execute("SELECT * FROM BankUser WHERE Id = ?;", [userId])
+            cur.execute("SELECT * FROM BankUser WHERE UserId = ?;", [userId])
             user = cur.fetchone()
             db.close()
             if user:
